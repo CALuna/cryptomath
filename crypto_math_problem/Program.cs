@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
-using System.Text;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace crypto_math_problem
@@ -13,10 +12,13 @@ namespace crypto_math_problem
 		static void Main(string[] args)
 		{
 
-//		    LinqVersionFastest();
+		  //  LinqVersionFastest();
 //		    LinqVersionFaster();
 //            LinqVersion();
 	
+
+            TimeCall(()=>stephenVersion());
+
 
             var stopWatch = new Stopwatch();
             stopWatch.Start();
@@ -31,41 +33,37 @@ namespace crypto_math_problem
             "=====".Dump();
             "{0}".Dump(res);
 
-			var phrase = new string((term1 + term2 + res).Distinct().ToArray()).ToLower(); ;
-
+         //   var phrase = new string((term1 + term2 + res).Distinct().Reverse().ToArray()).ToLower();
+		    var phrase = "yromdnes";
+//		    var phrase = "sromdney";
 		    var count = 1;
 		    var permutations = 0;
-//			foreach (var map in phrase.GetMappings(Enumerable.Range(0,10).ToArray()))
-//			{
-//                permutations++;
-//
-//
-//                var t1 = ToNum(map.s, map.e, map.n, map.d);
-//                var t2 = ToNum(map.m, map.o, map.r, map.e);
-//                var r0 = ToNum(map.m, map.o, map.n, map.e, map.y);
-//	
-//				if (t1 + t2 == r0)
-////				if (int.Parse(t1) + int.Parse(t2) == int.Parse(r))
-//				{
-////				    count++;
-//					"{0})\t\t\t{1}".Dump(count++,map.ToString());
-//					"\t {0}".Dump(t1);
-//					"\t+{0}".Dump(t2);
-//				    "\t=====".Dump();
-//					"\t{0}".Dump(r0);
-//				}
-//
-//			}
-        
-            
-            foreach (var map in phrase.GetMappings(Enumerable.Range(0,10).ToArray()))
+		    var exclusions = new Mappings<int[]>
+		    {
+		        s = new[] {0},
+		        m = new[] {0}
+		    };
+
+		    foreach (var map in phrase.GetMappings(Enumerable.Range(0,10).ToArray(),exclusions))
 			{
                 permutations++;
-
 
                 var t1 = ToNum(map.s, map.e, map.n, map.d);
                 var t2 = ToNum(map.m, map.o, map.r, map.e);
                 var r0 = ToNum(map.m, map.o, map.n, map.e, map.y);
+
+
+                if ((ToNum(map.d) + ToNum(map.e) == ToNum(map.y)||(ToNum(map.d) + ToNum(map.e) == ToNum(map.y)+10)))
+                
+			    {
+                    if ((ToNum(map.n, map.d) + ToNum(map.r, map.e) == ToNum(map.e, map.y) || (ToNum(map.n, map.d) + ToNum(map.r, map.e) == ToNum(map.e, map.y+10))))
+			        {
+			            exclusions.d = new[] {map.d};
+			            exclusions.e = new[] {map.e};
+            
+			        }
+                }
+			
 	
 				if (t1 + t2 == r0)
 				{
@@ -74,6 +72,7 @@ namespace crypto_math_problem
 					"\t+{0}".Dump(t2);
 				    "\t=====".Dump();
 					"\t{0}".Dump(r0);
+				    break;
 				}
 
 			}
@@ -81,7 +80,7 @@ namespace crypto_math_problem
             stopWatch.Stop();
             var ts = stopWatch.Elapsed;
 
-            var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+            var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:0000}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
             elapsedTime.Dump();
 
             "{0} Mappings were tested. Total matches {1}".Dump(permutations,count-1);
@@ -141,6 +140,20 @@ namespace crypto_math_problem
         public static int ToNum(int v3, int v2, int v1, int v0)
 	    {
 	        return  v3*1000 + v2*100 + v1*10 + v0;
+	    }   
+        public static int ToNum(  int v2, int v1, int v0)
+	    {
+	        return  v2*100 + v1*10 + v0;
+	    }
+
+	    public static int ToNum(int v1, int v0)
+	    {
+	        return v1*10 + v0;
+	    }
+
+	    public static int ToNum(  int v0)
+	    {
+	        return  v0;
 	    }
        
         
@@ -172,11 +185,11 @@ namespace crypto_math_problem
 //	            select new {n, r, e}).ToArray();
 
 
-
+            //.Except(new[]{0})
 
             var q = (
 	
-                from i1 in sub1.ToArray() 
+                from i1 in sub1.ToArray()
                 from s in range
                     
 	            from n in range
@@ -190,6 +203,8 @@ namespace crypto_math_problem
                 let r0 = ToNum(m, o, n, i1.e, i1.y)
 
 	            where t1+t2==r0 &&
+
+                        s!=0 && m!=0 &&
                         s != i1.e && s != n && s != i1.d && s != m && s != o && s != r && s != i1.y &&
                         i1.e != n && i1.e != i1.d && i1.e != m && i1.e != o && i1.e != r && i1.e != i1.y &&
                         n != i1.d && n != m && n != o && n != r && n != i1.y &&
@@ -272,43 +287,55 @@ namespace crypto_math_problem
 
 
         }
-    }
 
-
-
-
-
-	public class CharMapping
-	{
-		public char Key { get; set; }
-		public int Value { get; set; }
-
-	}
-     
-
-	public class CharMappings:List<CharMapping>
-	{
-		public CharMappings()
-		{
-		}
-		public CharMappings(IEnumerable<CharMapping> values )
-		{
-			base.AddRange(values);
-		}
-
-	    public override string ToString()
+	    public static void TimeCall(Action t)
 	    {
-            var sb = new StringBuilder();
-	        var first = true;
-	        foreach (var m in this)
-	        {
-	            if (!first)
-	                sb.Append(",");
-	           
-	            sb.AppendFormat("{0}:{1}", m.Key, m.Value); 
-                first = false;
-	        }
-	        return sb.ToString();
+	        
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+	        t();
+
+            stopWatch.Stop();
+            var ts = stopWatch.Elapsed;
+
+            var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+            elapsedTime.Dump();
+            "Done".Dump();
+
 	    }
-	}
+
+	    public static void stephenVersion()
+	    {
+	        
+        
+			var vals = Enumerable.Range(0, 10);
+			
+			var solve =
+				from m in vals
+				from o in vals.Except(new[] { m })
+				from n in vals.Except(new[] { m, o })
+				from e in vals.Except(new[] { m, o, n })
+				from y in vals.Except(new[] { m, o, n, e })
+				from s in vals.Except(new[] { m, o, n, e, y })
+				from d in vals.Except(new[] { m, o, n, e, y, s })
+				from r in vals.Except(new[] { m, o, n, e, y, s, d })
+			
+				// Don't include solutions that have numbers that start with Zero
+				where s != 0
+				where m != 0
+			
+				let send = s * 1000 + e * 100 + n * 10 + d
+				let more = m * 1000 + o * 100 + r * 10 + e
+				let money = m * 10000 + o * 1000 + n * 100 + e * 10 + y
+			
+				where send + more == money
+				select new { send, more, money };
+			
+			  var res= solve.FirstOrDefault().ToString();
+
+
+
+	    }
+    }
 }

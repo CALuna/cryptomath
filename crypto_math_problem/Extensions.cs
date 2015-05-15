@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace crypto_math_problem
 {
@@ -17,60 +18,23 @@ namespace crypto_math_problem
             Console.WriteLine(s,args);
         }
 
-
-
-        public static CharMappings ToCharMappings(this Dictionary<char, int> d)
+        
+        public static IEnumerable<Mappings<int>> GetMappings(this string chars, int[] values, Mappings<int[]> exclusions=null )
         {
-            return new CharMappings( d.Select(kvp => new CharMapping {Key = kvp.Key, Value = kvp.Value}).ToList());
-        }
-
-
-
-
-        public static IEnumerable<CharMappings> GetMappingsOrg(this string chars, int[] values)
-        {
-
             if (chars.Length == 0)
                 yield break;
-			 
+            exclusions = exclusions ?? new Mappings<int[]>(); 
             var curChar =  chars.Take(1).First();
             var subphrase = new string( chars.Skip(1).ToArray());
-
-            foreach (var val in values)
+            
+            var charExclusion= exclusions[curChar] ?? new int[0]; 
+        
+            foreach (var val in values.Except(charExclusion))
             {
-                var v = values.Except(new[]{val}).ToArray();
+                var v = values.Except(new[] {val}).ToArray();
                 if (subphrase.Length > 0)
                 {
-                    foreach (var mapping in subphrase.GetMappingsOrg(v))
-                    {
-                        mapping.Add(new CharMapping { Key = curChar, Value = val });
-                        yield return mapping;
-                    }
-                }
-                else
-                {
-                    yield return  new CharMappings {new CharMapping {Key = curChar, Value = val}};
-                }
-            }
-		
-
-
-        }
-        public static IEnumerable<Mappings> GetMappings(this string chars, int[] values)
-        {
-
-            if (chars.Length == 0)
-                yield break;
-			 
-            var curChar =  chars.Take(1).First();
-            var subphrase = new string( chars.Skip(1).ToArray());
-
-            foreach (var val in values)
-            {
-                var v = values.Except(new[]{val}).ToArray();
-                if (subphrase.Length > 0)
-                {
-                    foreach (var mapping in subphrase.GetMappings(v))
+                    foreach (var mapping in subphrase.GetMappings(v,exclusions))
                     {
                         mapping[curChar] = val ;
                         yield return mapping;
@@ -78,10 +42,9 @@ namespace crypto_math_problem
                 }
                 else
                 {
-                    var mapping=new Mappings();
+                    var mapping=new Mappings<int>();
                     mapping[curChar] = val;
                     yield return mapping;
-                  
                 }
             }
 		
@@ -89,18 +52,7 @@ namespace crypto_math_problem
 
         }
 
-        public static string Replace(this string s, CharMappings map)
-        {
-		
-            foreach (var c in map)
-            {	
-                s=s.Replace(c.Key,c.Value.ToString()[0]);
-			
-            }
-            return s;
-		
-	
-        }
-
     }
+
+    
 }

@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CharMapping.cs" />
+    <Compile Include="CharMappings.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Mappings.cs" />
     <Compile Include="Program.cs" />

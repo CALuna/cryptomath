@@ -2,37 +2,37 @@ using System;
 
 namespace crypto_math_problem
 {
-    public class Mappings
+    public class Mappings<T>
     {
-        public int a { get; set; }
-        public int b { get; set; }
-        public int c { get; set; }
-        public int d { get; set; }
-        public int e { get; set; }
-        public int f { get; set; }
-        public int g { get; set; }
-        public int h { get; set; }
-        public int i { get; set; }
-        public int j { get; set; }
-        public int k { get; set; }
-        public int l { get; set; }
-        public int m { get; set; }
-        public int n { get; set; }
-        public int o { get; set; }
-        public int p { get; set; }
-        public int q { get; set; }
-        public int r { get; set; }
-        public int s { get; set; }
-        public int t { get; set; }
-        public int u { get; set; }
-        public int v { get; set; }
-        public int w { get; set; }
-        public int x { get; set; }
-        public int y { get; set; }
-        public int z { get; set; }
+        public T a { get; set; }
+        public T b { get; set; }
+        public T c { get; set; }
+        public T d { get; set; }
+        public T e { get; set; }
+        public T f { get; set; }
+        public T g { get; set; }
+        public T h { get; set; }
+        public T i { get; set; }
+        public T j { get; set; }
+        public T k { get; set; }
+        public T l { get; set; }
+        public T m { get; set; }
+        public T n { get; set; }
+        public T o { get; set; }
+        public T p { get; set; }
+        public T q { get; set; }
+        public T r { get; set; }
+        public T s { get; set; }
+        public T t { get; set; }
+        public T u { get; set; }
+        public T v { get; set; }
+        public T w { get; set; }
+        public T x { get; set; }
+        public T y { get; set; }
+        public T z { get; set; }
 
 
-        public int this[int number]
+        public T this[int number]
         {
             get
             {
